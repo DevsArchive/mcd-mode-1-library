@@ -8,11 +8,12 @@ Simply just booting from cartridge while the Mega CD is attached to the Mega Dri
 All you really need to do to get started is, after game initialization, call FindMCDBIOS to detect the BIOS. If the game finds a known BIOS, then you can call InitSubCPU to initialize the Sub CPU and upload your initial system program. After that, you can then wait for the Sub CPU to boot and initialize. For that to work, however, you need to enable vertical interrupts, and have your handler call FireMCDIRQ2 or however you choose to fire an IRQ2 request to the Sub CPU. You can then choose to disable interrupts and stop firing IRQ2 requests after the Sub CPU is properly initiaized.
 
 		jsr	FindMCDBIOS			; Find the MCD's BIOS
-		bcs.s	@Skip				; If it wasn't found, branc
+		bcs.s	@Skip				; If it wasn't found, branch
 
 		lea	SubProgram(pc),a1		; Initialize Sub CPU
 		move.w	#SubProgramSize-1,d0
 		jsr	InitSubCPU
+		bne.s	@Skip				; If it failed, branch
 
 		move	#$2300,sr			; Enable interrupts
 		; Wait for the Sub CPU to initialize here

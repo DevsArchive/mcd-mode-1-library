@@ -28,13 +28,7 @@
 ; -------------------------------------------------------------------------
 
 InitSubCPU:
-	move.w	#$FF00,$A12002			; Reset the Sub CPU
-	move.b	#3,$A12001
-	move.b	#2,$A12001
-	move.b	#0,$A12001
-
-	moveq	#$80-1,d1			; Wait
-	dbf	d1,*
+	bsr.w	ResetSubCPU			; Reset the Sub CPU
 
 	bsr.w	ReqSubCPUBus			; Request Sub CPU bus
 	move.b	d1,d2
@@ -62,6 +56,23 @@ InitSubCPU:
 @End:
 	move.b	d2,d0				; Copy return code
 	rts
+
+; -------------------------------------------------------------------------
+; Copy new user Sub CPU program into PRG RAM and reset the Sub CPU
+; -------------------------------------------------------------------------
+; PARAMETERS:
+;	a0.l - Pointer to Sub CPU program to copy
+;	d0.w - Size of Sub CPU program to copy
+; RETURNS:
+;	d0.b - Return code
+;	       0 - Success
+;	       1 - MCD took too long to respond
+;	       2 - Failed to copy Sub CPU program
+; -------------------------------------------------------------------------
+
+CopyNewUserSP:
+	bsr.w	ResetSubCPU			; Reset the Sub CPU
+	lea	$426000,a1			; Copy to user Sub CPU program area
 
 ; -------------------------------------------------------------------------
 ; Copy data into PRG RAM
@@ -98,6 +109,20 @@ CopyToPRGRAM:
 
 @End:
 	move.b	d2,d0				; Copy return code
+	rts
+
+; -------------------------------------------------------------------------
+; Reset the Sub CPU
+; -------------------------------------------------------------------------
+
+ResetSubCPU:
+	move.w	#$FF00,$A12002			; Reset the Sub CPU
+	move.b	#3,$A12001
+	move.b	#2,$A12001
+	move.b	#0,$A12001
+
+	moveq	#$80-1,d1			; Wait
+	dbf	d1,*
 	rts
 
 ; -------------------------------------------------------------------------

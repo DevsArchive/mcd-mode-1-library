@@ -23,3 +23,5 @@ All you really need to do to get started is, after game initialization, call Fin
 	VInterrupt:
 		jsr	FireMCDIRQ2			; Fire MCD IRQ2
 		...
+		
+Sub CPU BIOS code decompression also requires the [Kosinski Decompression routine](https://segaretro.org/Kosinski_compression#Decompression_code) (called KosDec here).

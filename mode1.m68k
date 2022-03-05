@@ -21,10 +21,9 @@
 ;	a1.l - Pointer to user Sub CPU program
 ;	d0.w - Size of user Sub CPU program
 ; RETURNS:
-;	d0.b - Return code
-;	       0 - Success
-;	       1 - MCD took too long to respond
-;	       2 - Failed to load user Sub CPU
+;	d0.b - Error codes
+;	       Bit 0 - MCD took too long to respond
+;	       Bit 1 - Failed to load user Sub CPU
 ; -------------------------------------------------------------------------
 
 InitSubCPU:
@@ -44,17 +43,14 @@ InitSubCPU:
 	movea.l	a1,a0				; Copy user Sub CPU program into PRG RAM
 	lea	$426000,a1
 	bsr.w	CopyPRGRAMData
-	move.b	d1,d2
+	or.b	d1,d2
 
 @ReturnBus:
 	move.b	#$2A,$A12002			; Enable write protect on Sub CPU memory
 	bsr.s	ReturnSubCPUBus			; Return Sub CPU bus
-	tst.b	d2				; Was an error return code already set?
-	bne.s	@End				; If so, branch
-	move.b	d1,d2				; Get return code
+	or.b	d1,d2				; Set error code
 
-@End:
-	move.b	d2,d0				; Copy return code
+	move.b	d2,d0				; Get return code
 	rts
 
 ; -------------------------------------------------------------------------
@@ -64,10 +60,9 @@ InitSubCPU:
 ;	a0.l - Pointer to Sub CPU program to copy
 ;	d0.w - Size of Sub CPU program to copy
 ; RETURNS:
-;	d0.b - Return code
-;	       0 - Success
-;	       1 - MCD took too long to respond
-;	       2 - Failed to copy Sub CPU program
+;	d0.b - Error codes
+;	       Bit 0 - MCD took too long to respond
+;	       Bit 1 - Failed to load user Sub CPU
 ; -------------------------------------------------------------------------
 
 CopyNewUserSP:
@@ -82,10 +77,9 @@ CopyNewUserSP:
 ;	a1.l - Destination address
 ;	d0.w - Size of data to copy
 ; RETURNS:
-;	d0.b - Return code
-;	       0 - Success
-;	       1 - MCD took too long to respond
-;	       2 - Failed to copy data
+;	d0.b - Error codes
+;	       Bit 0 - MCD took too long to respond
+;	       Bit 1 - Failed to load user Sub CPU
 ; -------------------------------------------------------------------------
 
 CopyToPRGRAM:
@@ -97,18 +91,15 @@ CopyToPRGRAM:
 	move.b	#0,$A12002			; Disable write protect on Sub CPU memory
 
 	bsr.w	CopyPRGRAMData			; Copy data to PRG-RAM
-	move.b	d1,d2
+	or.b	d1,d2
 
 	move.b	d3,$A12002			; Restore write protect on Sub CPU memory
 
 @ReturnBus:
 	bsr.s	ReturnSubCPUBus			; Return Sub CPU bus
-	tst.b	d2				; Was an error return code already set?
-	bne.s	@End				; If so, branch
-	move.b	d1,d2				; Get return code
+	or.b	d1,d2				; Set error code
 
-@End:
-	move.b	d2,d0				; Copy return code
+	move.b	d2,d0				; Get return code
 	rts
 
 ; -------------------------------------------------------------------------

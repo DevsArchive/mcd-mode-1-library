@@ -159,18 +159,18 @@ ReqSubCPUBus:
 ReturnSubCPUBus:
 	move.w	#$100-1,d1			; Max time to wait for MCD response
 
-@GiveSubBus:
-	bclr	#1,$A12001			; Give back Sub CPU bus
-	dbeq	d1,@GiveSubBus			; Loop until we've waited too long or until the MCD has responded
-	bne.s	@WaitedTooLong			; If we've waited too long, branch
-
-	move.w	#$100-1,d1			; Max time to wait for MCD response
-
 @RunSub:
 	bset	#0,$A12001			; Set the Sub CPU to run again
 	dbne	d1,@RunSub			; Loop until we've waited too long or until the MCD has responded
 	beq.s	@WaitedTooLong			; If we've waited too long, branch
 	
+	move.w	#$100-1,d1			; Max time to wait for MCD response
+
+@GiveSubBus:
+	bclr	#1,$A12001			; Give back Sub CPU bus
+	dbeq	d1,@GiveSubBus			; Loop until we've waited too long or until the MCD has responded
+	bne.s	@WaitedTooLong			; If we've waited too long, branch
+
 	moveq	#0,d1				; Success
 	rts
 

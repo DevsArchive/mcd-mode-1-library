@@ -195,7 +195,7 @@ ReturnSubCPUBus:
 CopyPRGRAMData:
 	lea	$420000,a1			; Get destination address
 	move.l	d1,d2
-	andi.l	#$20000-1,d2
+	andi.l	#$1FFFF,d2
 	add.l	d2,a1
 	
 	move.b	$A12003,d2			; Set bank ID

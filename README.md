@@ -16,7 +16,7 @@ All you really need to do to get started is, after game initialization, call Fin
 		jsr	InitSubCPU
 		bne.s	@Skip				; If it failed, branch
 
-		move.w	#$8000|%xx1xxxxx,$C00004	; Enable V-BLANK interrupts
+		move.w	#$8100|%xx1xxxxx,$C00004	; Enable V-BLANK interrupts
 		move	#$2000,sr			; Enable m68k interrupts
 		; Wait for the Sub CPU to initialize here
 

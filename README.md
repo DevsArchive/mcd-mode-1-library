@@ -1,3 +1,5 @@
+# NOTICE: This repository is obsolete. Go [here](https://github.com/devon-artmeier/mcd-mode-1-library) for an updated version.
+
 # Mega CD Mode 1 Library
 A small library for working with booting mode 1 for the Mega CD.
 
